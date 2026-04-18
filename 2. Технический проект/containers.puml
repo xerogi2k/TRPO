@@ -1,0 +1,44 @@
+@startuml containers
+!include <C4/C4_Container>
+
+skinparam wrapWidth 250
+skinparam wrapMessageWidth 200
+
+title "Контейнерная диаграмма — Мобильная платформа для аквалангистов"
+
+Person(user, "Пользователь", "Дайвер, инструктор или представитель дайв-центра")
+Person(admin, "Администратор", "Модерация, блокировки, аудит и статистика")
+
+System_Boundary(platform, "Платформа для аквалангистов") {
+
+    Container(mobile, "Мобильное приложение", "iOS / Android", "Основной интерфейс, offline-режим и импорт с дайв-компьютера")
+        user --> mobile : "Работа с платформой\n[HTTPS]"
+
+    Container(admin_console, "Административная консоль", "Web UI", "Модерация, управление пользователями, аудит и агрегированная статистика")
+        admin --> admin_console : "Администрирование\n[HTTPS + MFA]"
+
+    Container(backend, "Backend (Modular Monolith)", "Среда выполнения", "Единый backend с API и доменными модулями")
+        mobile --> backend : "API-вызовы и синхронизация\n[HTTPS, JSON]"
+        admin_console --> backend : "Административные API-вызовы\n[HTTPS, JSON]"
+
+    ContainerDb(database, "Основная база данных", "Транзакционное хранилище", "Источник истины для доменных данных")
+        backend --> database : "Чтение/запись\n[SQL]"
+
+    ContainerQueue(broker, "Шина событий", "Брокер сообщений", "Асинхронные доменные события")
+        backend --> broker : "Публикация событий\n[Outbox]"
+        broker --> backend : "Фоновые реакции\n[Async]"
+
+    ContainerDb(search, "Поиск и геоиндекс", "Проекция чтения", "Индексы для поиска и карты")
+        backend --> search : "Поиск\n[Query]"
+
+    Container(storage, "Object Storage / CDN", "Хранилище медиа", "Фотографии и пользовательские вложения")
+        backend --> storage : "Управление медиа\n[HTTPS]"
+}
+
+System_Ext(dive_computer, "Дайв-компьютер", "BLE / USB / SDK")
+System_Ext(providers, "Внешние провайдеры", "Платежи, push, email/SMS, карты")
+
+mobile --> dive_computer : "Считывание профиля погружения"
+backend --> providers : "Интеграции\n[HTTPS / webhook]"
+
+@enduml

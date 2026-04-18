@@ -1,0 +1,53 @@
+@startuml components
+!include <C4/C4_Component>
+
+skinparam wrapWidth 220
+skinparam wrapMessageWidth 180
+
+title "Компонентная диаграмма — Backend (Modular Monolith)"
+
+Person(user, "Пользователь", "Работает с мобильным приложением")
+Person(admin, "Администратор", "Работает с административной консолью")
+
+Container(mobile, "Мобильное приложение", "iOS / Android", "Пользовательский интерфейс")
+Container(admin_console, "Административная консоль", "Web UI", "Интерфейс модерации, аудита и статистики")
+
+System_Boundary(backend_boundary, "Backend (Modular Monolith)") {
+    Component(api, "API layer", "Component", "Публичные, мобильные, административные и webhook endpoints")
+    Component(policy, "Policy / Authorization", "Component", "Проверка ролей, прав доступа и владения данными")
+
+    Component(app_services, "Application Services", "Component", "Оркестрация пользовательских сценариев")
+    Component(async_handlers, "Async / Background Handlers", "Component", "Обработка событий, ретраи, индексация и уведомления")
+
+    Component(domain_services, "Domain Services", "Component", "Бизнес-правила, состояния, расчёты и синхронизация")
+
+    Component(repositories, "Repositories", "Component", "Доступ к агрегатам и проекциям чтения")
+    Component(adapters, "Integration Adapters", "Component", "Платежи, уведомления, карты, медиа и поиск")
+}
+
+ContainerDb(database, "Основная база данных", "Database", "Агрегаты и транзакционные данные")
+ContainerQueue(broker, "Шина событий", "Message Broker", "Доменные события")
+ContainerDb(search, "Поиск и геоиндекс", "Read Model", "Производные поисковые данные")
+Container(storage, "Object Storage / CDN", "Storage", "Медиафайлы")
+System_Ext(providers, "Внешние провайдеры", "Payment, Push, Email/SMS, Maps")
+
+Rel(user, mobile, "Использует", "HTTPS")
+Rel(admin, admin_console, "Использует", "HTTPS + MFA")
+Rel(mobile, api, "API-вызовы", "JSON / HTTPS")
+Rel(admin_console, api, "Административные API-вызовы", "JSON / HTTPS")
+
+Rel(api, policy, "Проверка доступа")
+Rel(api, app_services, "Команды и запросы")
+Rel(app_services, domain_services, "Бизнес-правила")
+Rel(app_services, repositories, "Чтение/запись агрегатов")
+Rel(app_services, adapters, "Интеграции")
+Rel(app_services, broker, "Публикация событий", "Outbox")
+
+Rel(async_handlers, broker, "Чтение событий")
+Rel(async_handlers, adapters, "Фоновые реакции")
+Rel(repositories, database, "SQL")
+Rel(adapters, search, "Обновление и чтение проекций")
+Rel(adapters, storage, "Работа с медиа")
+Rel(adapters, providers, "Платежи, уведомления, карты")
+
+@enduml

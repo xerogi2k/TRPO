@@ -1,0 +1,56 @@
+@startuml infrastructure
+left to right direction
+!define C4P https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master
+!includeurl C4P/C4_Container.puml
+
+skinparam wrapWidth 240
+skinparam wrapMessageWidth 180
+
+title "Инфраструктурная диаграмма — Мобильная платформа для аквалангистов"
+
+package "Клиентский контур" as client_zone {
+    Container(mobile, "Мобильное устройство", "iOS / Android", "Приложение, локальное хранилище и очередь синхронизации")
+    System_Ext(dive_computer, "Дайв-компьютер", "Источник данных погружения")
+}
+
+package "Облачная инфраструктура" as cloud_zone {
+    Container(edge, "Public Edge", "Reverse Proxy / WAF", "TLS, маршрутизация и rate limiting")
+
+    package "Среда выполнения backend" as runtime {
+        Container(backend, "Backend (Modular Monolith)", "Среда выполнения", "API и доменные модули")
+        Container(workers, "Фоновые обработчики", "Фоновые процессы", "Уведомления, индексация и ретраи")
+    }
+
+    ContainerQueue(broker, "Шина событий", "Брокер сообщений", "Асинхронные доменные события")
+    Container(secrets, "Secret Management", "Secrets", "Секреты интеграций")
+}
+
+package "Административный контур" as admin_zone {
+    Container(admin_console, "Admin Console", "Web UI", "Модерация и аудит")
+}
+
+package "Хранение данных" as data_zone {
+    ContainerDb(database, "Основная база данных", "Транзакционное хранилище", "Источник истины")
+    ContainerDb(search, "Поиск и геоиндекс", "Проекция чтения", "Производные данные для поиска")
+    Container(storage, "Object Storage / CDN", "Хранилище медиа", "Медиафайлы и доставка")
+}
+
+System_Ext(providers, "Внешние провайдеры", "Payment, Push, Email/SMS, Maps")
+
+Rel(dive_computer, mobile, "Передача данных", "BLE / USB / SDK")
+Rel(mobile, edge, "API-вызовы", "HTTPS")
+Rel(admin_console, edge, "Административные API-вызовы", "HTTPS + MFA")
+Rel(edge, backend, "Проксирование запросов", "HTTPS")
+
+Rel(backend, database, "Чтение/запись", "SQL")
+Rel(backend, broker, "Публикация событий", "Outbox")
+Rel(workers, broker, "Чтение событий", "Async")
+Rel(workers, search, "Обновление индексов", "Async")
+Rel(backend, search, "Поиск", "Query")
+Rel(backend, storage, "Управление медиа", "HTTPS")
+Rel(backend, secrets, "Получение секретов")
+Rel(backend, providers, "Интеграции", "HTTPS")
+Rel(workers, providers, "Уведомления и ретраи", "HTTPS")
+Rel(providers, edge, "Webhook платежей", "HTTPS")
+
+@enduml

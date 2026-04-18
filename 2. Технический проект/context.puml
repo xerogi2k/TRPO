@@ -1,0 +1,33 @@
+@startuml context
+!include <C4/C4_Context>
+
+skinparam wrapWidth 220
+skinparam wrapMessageWidth 180
+
+title "Контекстная диаграмма — Мобильная платформа для аквалангистов"
+
+Person(diver, "Дайвер-любитель", "Ведёт логбук, ищет дайв-сайты, планирует погружения")
+Person(instructor, "Инструктор / дайв-гид", "Проводит курсы, ведёт группы, публикует расписание")
+Person(center, "Дайв-центр", "Публикует услуги, управляет турами и бронированиями")
+Person(admin, "Администратор", "Модерирует контент, управляет пользователями, аудитом и статистикой")
+
+System(platform, "Платформа для аквалангистов", "Логбук, планировщик, база дайв-сайтов, социальные функции, бронирования и уведомления")
+
+System_Ext(dive_computer, "Дайв-компьютер", "Источник данных погружения")
+System_Ext(payment, "Платёжный провайдер", "Обработка платежей и возвратов")
+System_Ext(push, "Push-провайдеры", "Доставка push-уведомлений")
+System_Ext(maps, "Карты / геосервисы", "Карты, координаты и геокодирование")
+System_Ext(email_sms, "Email/SMS provider", "Резервные уведомления")
+
+Rel(diver, platform, "Ведёт логбук, ищет сайты", "Mobile App / HTTPS")
+Rel(instructor, platform, "Управляет курсами и группами", "Mobile App / HTTPS")
+Rel(center, platform, "Управляет услугами и бронированиями", "HTTPS")
+Rel(admin, platform, "Модерирует, проводит аудит и анализирует статистику", "HTTPS + MFA")
+
+Rel(platform, dive_computer, "Импорт данных через мобильное устройство", "BLE / USB / SDK")
+Rel(platform, payment, "Создание платежей и получение статусов", "HTTPS / webhook")
+Rel(platform, push, "Отправка push-уведомлений", "Provider API")
+Rel(platform, maps, "Получение картографических данных", "Provider API")
+Rel(platform, email_sms, "Отправка email и SMS", "Provider API")
+
+@enduml

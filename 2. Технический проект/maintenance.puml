@@ -1,0 +1,70 @@
+@startuml maintenance
+!theme vibrant
+
+title Диаграмма сопровождения — Мобильная платформа для аквалангистов
+
+package "Эксплуатация платформы" as operations {
+  actor "Системный администратор" as sys_admin
+  actor "Администратор платформы" as platform_admin
+
+  package "Наблюдаемость" as observability {
+    [Мониторинг] as monitoring << (C, #FFAAAA) >>
+    [Логирование] as logging << (C, #FFAAAA) >>
+    [Трассировка] as tracing << (C, #FFAAAA) >>
+  }
+
+  package "Контроль данных" as data_control {
+    [Журнал аудита] as audit << (C, #FFAAAA) >>
+    [Резервное копирование] as backup << (C, #FFAAAA) >>
+    [Восстановление] as restore << (C, #FFAAAA) >>
+  }
+
+  package "Контроль очередей" as queue_control {
+    [Retry policy] as retry << (C, #FFAAAA) >>
+    [Dead-letter queue] as dlq << (C, #FFAAAA) >>
+    [Разбор ошибок] as incident_review << (C, #FFAAAA) >>
+  }
+}
+
+package "Среда выполнения" as runtime {
+  [Backend (Modular Monolith)] as backend << (C, #FFAAAA) >>
+  [Фоновые обработчики] as workers << (C, #FFAAAA) >>
+  [Шина событий] as broker << (C, #FFAAAA) >>
+}
+
+package "Хранение данных" as data {
+  database "Основная база данных" as database
+  database "Object Storage / CDN" as storage
+  database "Поиск и геоиндекс" as search
+}
+
+package "Внешние провайдеры" as providers {
+  [Платёжный провайдер] as payment << (C, #FFAAAA) >>
+  [Push-провайдеры] as push << (C, #FFAAAA) >>
+  [Email/SMS provider] as email_sms << (C, #FFAAAA) >>
+  [Карты / геосервисы] as maps << (C, #FFAAAA) >>
+}
+
+sys_admin --> observability : "Контроль доступности и нагрузки"
+sys_admin --> backup : "Контроль резервных копий"
+platform_admin --> audit : "Просмотр административных действий"
+
+backend --> monitoring : "Метрики API"
+backend --> logging : "Структурные логи"
+backend --> tracing : "CorrelationId"
+workers --> monitoring : "Lag, retries, delivery rate"
+broker --> monitoring : "Очереди и DLQ"
+search --> monitoring : "Задержка индексации"
+
+backend --> audit : "Запись административных действий"
+database --> backup : "Резервные копии логбука и бронирований"
+storage --> backup : "Резервирование медиа"
+backup --> restore : "Проверяемое восстановление"
+
+workers --> retry : "Повторная обработка"
+retry --> dlq : "Исчерпан лимит попыток"
+dlq --> incident_review : "Ручной разбор"
+workers --> providers : "Доставка и интеграции"
+providers --> workers : "Ошибки и повторные webhook"
+
+@enduml

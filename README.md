@@ -60,3 +60,11 @@
 **Комментарии:**
 
 Ключевым фактором успеха проекта станет доверие пользователей, основанное на надежности хранения данных логбука и точности инструментов планирования. Для привлечения и удержания аудитории особое внимание следует уделить удобству интерфейса, стабильности работы в автономном режиме и развитию социальных функций, которые превратят приложение из простого инструмента в центр дайвинг-сообщества.
+
+**Ссылки для доступа к Miro и Avion:**
+
+EventStorming: https://miro.com/welcomeonboard/d29mL0N3ZUI1REYxZ2Z6dDl5cGU1NXYzM1NPdVdERk1TVDgxejNNVzFBc3U5eTVadGVycXFvU0F3aHlEcldacFZ1VDVQR3R5WVhWZDUzOHE5T3NDTDFtaDdaSmhkMUlOSnBlTVordnlTbHNJR3QxMnN3SHVNUXhwZGJqaC9iYndyVmtkMG5hNDA3dVlncnBvRVB2ZXBnPT0hdjE=?share_link_id=74110404747
+
+UserStoryMap:
+https://aaaa-1.avion.io/share/c46ZxazLKDeuexC3r
+

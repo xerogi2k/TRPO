@@ -63,7 +63,8 @@
 
 ## Ссылки для доступа к Miro и Avion:
 
-EventStorming: https://miro.com/welcomeonboard/d29mL0N3ZUI1REYxZ2Z6dDl5cGU1NXYzM1NPdVdERk1TVDgxejNNVzFBc3U5eTVadGVycXFvU0F3aHlEcldacFZ1VDVQR3R5WVhWZDUzOHE5T3NDTDFtaDdaSmhkMUlOSnBlTVordnlTbHNJR3QxMnN3SHVNUXhwZGJqaC9iYndyVmtkMG5hNDA3dVlncnBvRVB2ZXBnPT0hdjE=?share_link_id=74110404747
+EventStorming: 
+https://miro.com/welcomeonboard/d29mL0N3ZUI1REYxZ2Z6dDl5cGU1NXYzM1NPdVdERk1TVDgxejNNVzFBc3U5eTVadGVycXFvU0F3aHlEcldacFZ1VDVQR3R5WVhWZDUzOHE5T3NDTDFtaDdaSmhkMUlOSnBlTVordnlTbHRUYzZ6YVpnRmlIYVN4VW10Nmo4bjJyVmtkMG5hNDA3dVlncnBvRVB2ZXBnPT0hdjE=?share_link_id=203150391668
 
 UserStoryMap:
 https://aaaa-1.avion.io/share/c46ZxazLKDeuexC3r
